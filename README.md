@@ -26,7 +26,11 @@ Una landing page interactiva y romántica de dos escenas ("Lluvia de flores" y "
   - Estallido de confeti con `canvas-confetti` y sonido armónico al florecer.
   - Tarjeta de dedicatoria de cristal translúcido con el mensaje personalizado.
   - Botón "Ver de nuevo" (repite la animación de florecer y confeti) y "Copiar enlace para enviar" (con notificación toast interactiva).
-- **Control de Sonido**: Botón flotante para silenciar o activar el audio en cualquier momento.
+- **Música de Fondo & Reproductor Flotante**:
+  - Canción temática *"Flores Amarillas"* de Floricienta en `/public/audio/flores-amarillas.mp3`.
+  - Reproductor flotante con botón Play/Pause, barras de ecualizador animadas, título de la pista, control de silencio y volumen.
+  - Inicio automático suave al interactuar con la página (respetando las políticas de autoplay de navegadores móviles y de escritorio).
+  - Efectos sonoros mágicos al florecer el ramo (arpegio celestial `Emaj9`).
 - **Accesibilidad & Responsive**: Mobile-first, compatible con safe-area insets (`env(safe-area-inset-*)`) y respeto a `prefers-reduced-motion`.
 
 ---
