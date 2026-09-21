@@ -6,19 +6,23 @@ export interface DedicationData {
 
 export const DEFAULT_DEDICATION: DedicationData = {
   recipientName: "Mi Amor",
-  message: "Ella sabía que él sabía, que algún día pasaría... que vendría a buscarla con sus flores amarillas. 💛 Hoy estas flores son para ti, para recordarte lo especial que eres en mi vida y lo mucho que iluminas cada uno de mis días.",
+  message:
+    "Te amo con todo mi corazón 💛\n\n" +
+    "Este año tal vez no serán flores reales pero sí eternas.\n\n" +
+    "¡Jamás volverás a ser espectador mi vida hermosa! ✨",
   photoUrl: null,
 };
 
-export const ROMANTIC_PHRASES = [
+export const ROMANTIC_PHRASES: string[] = [
   "Te elijo hoy, mañana y siempre 💛",
-  "El amarillo del sol iluminaba la esquina ✨",
-  "Flores amarillas para iluminar tu sonrisa 🌼",
-  "Ella sabía que él vendría a buscarla...",
+  "3 GERBERAS significan te amo ✨",
+  "Gerberas amarillas para iluminar tu sonrisa 🌼",
+  "La distancia no es nada cuando alguien significa todo 💛",
   "Un detalle que florece con todo mi amor 💛",
-  "Tu luz brilla más que mil primaveras 🌸",
+  "Tienes los ojos más hermosos del universo 🌸",
   "Para ti, con todo mi corazón 🌻",
-  "En ese bar desierto los esperaba el encuentro...",
+  "Ese live nos unió para siempre...",
   "Promesas de amor que nunca se apagan ✨",
-  "No te olvides que la vida es un milagro 💛",
+  "No te olvides siempre serás mi suerte 💛",
+  "De entre tantas estrellas, tú eres la luna que ilumina mi vida 🌟",
 ];

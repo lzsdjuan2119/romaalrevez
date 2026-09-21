@@ -5,7 +5,7 @@ import { soundController, AudioState } from '../utils/audio';
 
 export const SoundToggle: React.FC = () => {
   const [audioState, setAudioState] = useState<AudioState>(soundController.getState());
-  const [showPrompt, setShowPrompt] = useState<boolean>(true);
+  const [showPrompt, setShowPrompt] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
   useEffect(() => {
@@ -16,8 +16,16 @@ export const SoundToggle: React.FC = () => {
       }
     });
 
+    // Show prompt only if autoplay was blocked by browser after 3.8s
+    const promptTimer = window.setTimeout(() => {
+      if (!soundController.getState().isPlaying) {
+        setShowPrompt(true);
+      }
+    }, 3800);
+
     return () => {
       unsubscribe();
+      window.clearTimeout(promptTimer);
     };
   }, []);
 

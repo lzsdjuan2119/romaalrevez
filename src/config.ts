@@ -1,11 +1,16 @@
+import { ROMANTIC_PHRASES, DEFAULT_DEDICATION } from './types';
+
 /**
  * =========================================================================
  * 🌼 CONFIGURACIÓN DE LA DEDICATORIA DE FLORES AMARILLAS
- * Modifica estos textos directamente aquí antes de desplegar o compartir.
+ * Textos, frases románticas y reproducción musical.
  * =========================================================================
  */
 
 export const DEDICATION_CONFIG = {
+  // Destinatario
+  recipientName: DEFAULT_DEDICATION.recipientName,
+
   // Título principal en la Escena 1 (tipografía manuscrita grande)
   scene1Title: "Con flores amarillas para ti",
 
@@ -20,27 +25,13 @@ export const DEDICATION_CONFIG = {
   scene2Header: "Un ramo eterno para ti",
 
   // Mensaje romántico principal debajo del ramo (en tipografía manuscrita grande y emotiva)
-  romanticMessage:
-    "Dicen que regalar flores amarillas es prometer un amor sincero que nunca se marchita.\n\n" +
-    "Hoy estas tres gerberas florecen solo para ti: para iluminar tus días con la misma calidez con la que tú iluminas mi vida, y para recordarte lo infinitamente especial que eres para mí.\n\n" +
-    "Que cada pétalo te recuerde cuánto te quiero hoy, mañana y siempre.",
+  romanticMessage: DEFAULT_DEDICATION.message,
 
   // Firma al pie del mensaje
   signature: "Con todo mi amor 💛",
 
   // Frases románticas cortas que flotan suavemente en la Escena 1
-  floatingPhrases: [
-    "Te elijo hoy y siempre 💛",
-    "El amarillo del sol iluminaba la esquina ✨",
-    "Flores amarillas para ti 🌼",
-    "Tu sonrisa ilumina mi cielo 🌙",
-    "Ella sabía que él vendría a buscarla...",
-    "Un detalle eterno de amor 💛",
-    "Promesas que nunca se marchitan 🌸",
-    "Para ti, con todo mi corazón ✨",
-    "En ese bar desierto los esperaba el encuentro... 💛",
-    "No te olvides que la vida es un milagro 🌼",
-  ],
+  floatingPhrases: ROMANTIC_PHRASES,
 
   // Música de fondo
   music: {
@@ -48,7 +39,9 @@ export const DEDICATION_CONFIG = {
     title: "Flores Amarillas",
     artist: "Floricienta",
     loop: true,
-    defaultVolume: 0.7,
+    defaultVolume: 0.3, // Volumen medio-bajo (30%)
+    autoplayDelaySeconds: 3, // Inicia a los 3 segundos de entrar
     autoplayOnInteraction: true,
   },
 };
+

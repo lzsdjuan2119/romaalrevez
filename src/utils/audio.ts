@@ -17,31 +17,40 @@ class SoundController {
   private audio: HTMLAudioElement | null = null;
   private isMuted: boolean = false;
   private isPlaying: boolean = false;
-  private volume: number = 0.7;
+  private volume: number = DEDICATION_CONFIG.music.defaultVolume ?? 0.3;
   private hasUserInteracted: boolean = false;
   private listeners: Set<AudioListener> = new Set();
   private interactionListenersAttached: boolean = false;
+  private delayPassed: boolean = false;
+  private delayTimer: number | null = null;
+  private removeInteractionListenersFn: (() => void) | null = null;
 
   constructor() {
     if (typeof window !== 'undefined') {
       try {
-        const storedMute = localStorage.getItem('flores_amarillas_muted');
+        const storedMute = localStorage.getItem('flores_amarillas_muted_v2');
         if (storedMute !== null) {
           this.isMuted = storedMute === 'true';
+        } else {
+          this.isMuted = false;
         }
-        const storedVolume = localStorage.getItem('flores_amarillas_volume');
+
+        const storedVolume = localStorage.getItem('flores_amarillas_volume_v2');
         if (storedVolume !== null) {
           const v = parseFloat(storedVolume);
           if (!isNaN(v) && v >= 0 && v <= 1) {
             this.volume = v;
           }
+        } else {
+          this.volume = DEDICATION_CONFIG.music.defaultVolume ?? 0.3;
         }
       } catch (e) {
         console.warn('LocalStorage error in SoundController:', e);
       }
 
       this.initAudioElement();
-      this.attachFirstInteractionListener();
+      this.attachInteractionListeners();
+      this.startAutoplayTimer();
     }
   }
 
@@ -52,11 +61,12 @@ class SoundController {
       const musicConfig = DEDICATION_CONFIG.music;
       this.audio = new Audio(musicConfig.src);
       this.audio.loop = musicConfig.loop ?? true;
-      this.audio.volume = this.isMuted ? 0 : (musicConfig.defaultVolume ?? this.volume);
+      this.audio.volume = this.isMuted ? 0 : (this.volume ?? musicConfig.defaultVolume ?? 0.3);
       this.audio.preload = 'auto';
 
       this.audio.addEventListener('play', () => {
         this.isPlaying = true;
+        this.removeInteractionListeners();
         this.notifyListeners();
       });
 
@@ -80,42 +90,55 @@ class SoundController {
     }
   }
 
-  private attachFirstInteractionListener() {
+  private startAutoplayTimer() {
+    if (typeof window === 'undefined') return;
+
+    const delayMs = (DEDICATION_CONFIG.music.autoplayDelaySeconds ?? 3) * 1000;
+
+    this.delayTimer = window.setTimeout(() => {
+      this.delayPassed = true;
+      if (!this.isPlaying && !this.isMuted) {
+        this.playMusic().catch((err) => {
+          console.log('Autoplay attempt at 3s waiting for user interaction:', err);
+        });
+      }
+    }, delayMs);
+  }
+
+  private attachInteractionListeners() {
     if (this.interactionListenersAttached || typeof window === 'undefined') return;
     this.interactionListenersAttached = true;
 
-    const handleFirstInteraction = () => {
+    const handleInteraction = () => {
       this.hasUserInteracted = true;
-      this.removeFirstInteractionListener();
 
       // Resume Web Audio context if suspended
       if (this.ctx && this.ctx.state === 'suspended') {
         this.ctx.resume().catch(() => {});
       }
 
-      // Auto-start music on first user touch / click if not muted
-      if (DEDICATION_CONFIG.music.autoplayOnInteraction && !this.isMuted && !this.isPlaying) {
+      // If the 3-second delay has passed, start music on user interaction
+      if (this.delayPassed && !this.isMuted && !this.isPlaying) {
         this.playMusic().catch(() => {});
-      } else {
-        this.notifyListeners();
       }
     };
 
-    const options = { once: true, passive: true };
-    window.addEventListener('click', handleFirstInteraction, options);
-    window.addEventListener('touchstart', handleFirstInteraction, options);
-    window.addEventListener('keydown', handleFirstInteraction, options);
+    const options = { passive: true };
+    window.addEventListener('click', handleInteraction, options);
+    window.addEventListener('touchstart', handleInteraction, options);
+    window.addEventListener('pointerdown', handleInteraction, options);
+    window.addEventListener('keydown', handleInteraction, options);
 
     this.removeInteractionListenersFn = () => {
-      window.removeEventListener('click', handleFirstInteraction);
-      window.removeEventListener('touchstart', handleFirstInteraction);
-      window.removeEventListener('keydown', handleFirstInteraction);
+      window.removeEventListener('click', handleInteraction);
+      window.removeEventListener('touchstart', handleInteraction);
+      window.removeEventListener('pointerdown', handleInteraction);
+      window.removeEventListener('keydown', handleInteraction);
+      this.interactionListenersAttached = false;
     };
   }
 
-  private removeInteractionListenersFn: (() => void) | null = null;
-
-  private removeFirstInteractionListener() {
+  private removeInteractionListeners() {
     if (this.removeInteractionListenersFn) {
       this.removeInteractionListenersFn();
       this.removeInteractionListenersFn = null;
@@ -153,6 +176,12 @@ class SoundController {
   }
 
   public async playMusic(): Promise<boolean> {
+    if (this.delayTimer) {
+      window.clearTimeout(this.delayTimer);
+      this.delayTimer = null;
+    }
+    this.delayPassed = true;
+
     if (!this.audio) {
       this.initAudioElement();
     }
@@ -167,6 +196,7 @@ class SoundController {
       if (playPromise !== undefined) {
         await playPromise;
         this.isPlaying = true;
+        this.removeInteractionListeners();
         this.notifyListeners();
         return true;
       }
@@ -211,7 +241,7 @@ class SoundController {
   public setMuted(muted: boolean): void {
     this.isMuted = muted;
     try {
-      localStorage.setItem('flores_amarillas_muted', String(this.isMuted));
+      localStorage.setItem('flores_amarillas_muted_v2', String(this.isMuted));
     } catch (e) {
       console.warn(e);
     }
@@ -231,7 +261,7 @@ class SoundController {
     const clamped = Math.max(0, Math.min(1, volume));
     this.volume = clamped;
     try {
-      localStorage.setItem('flores_amarillas_volume', String(clamped));
+      localStorage.setItem('flores_amarillas_volume_v2', String(clamped));
     } catch (e) {
       console.warn(e);
     }

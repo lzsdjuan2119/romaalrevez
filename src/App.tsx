@@ -143,7 +143,7 @@ export const App: React.FC = () => {
             <div className="flex items-center justify-between mb-5 border-b border-yellow-500/20 pb-3">
               <div className="flex items-center gap-2 text-yellow-300/90 text-xs sm:text-sm font-serifDisplay italic tracking-wider">
                 <Heart size={15} className="fill-yellow-400 text-yellow-400" />
-                <span>Un detalle que nunca se marchita</span>
+                <span>Para {DEDICATION_CONFIG.recipientName || 'Mi Amor'} • Un detalle que nunca se marchita</span>
               </div>
               <div className="text-xs text-amber-200/60 font-mono">
                 💛 21 de Septiembre
@@ -160,6 +160,35 @@ export const App: React.FC = () => {
               <span className="font-script text-3xl sm:text-4xl text-yellow-300 font-bold drop-shadow-[0_2px_10px_rgba(250,204,21,0.4)]">
                 {DEDICATION_CONFIG.signature}
               </span>
+            </div>
+          </motion.div>
+
+          {/* Interactive Romantic Phrases Pills */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.8, delay: 0.25 }}
+            className="w-full mb-6"
+          >
+            <div className="flex items-center justify-center gap-2 mb-3 text-xs uppercase tracking-widest text-amber-300/80 font-sans font-medium">
+              <Sparkles size={13} className="text-yellow-400" />
+              <span>Nuestras promesas y recuerdos</span>
+              <Sparkles size={13} className="text-yellow-400" />
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-2 max-w-lg mx-auto">
+              {DEDICATION_CONFIG.floatingPhrases.map((phrase, idx) => (
+                <motion.button
+                  key={idx}
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => soundController.playSparkle()}
+                  className="px-3.5 py-1.5 rounded-full backdrop-blur-md bg-[#160f33]/85 hover:bg-yellow-400/20 border border-yellow-400/35 hover:border-yellow-400/70 text-yellow-100/95 text-xs sm:text-sm font-sans shadow-[0_2px_12px_rgba(0,0,0,0.35)] hover:shadow-[0_0_15px_rgba(250,204,21,0.3)] transition-all flex items-center gap-1.5 cursor-pointer text-left"
+                >
+                  <span className="text-yellow-400 text-xs">✨</span>
+                  <span>{phrase}</span>
+                </motion.button>
+              ))}
             </div>
           </motion.div>
 
